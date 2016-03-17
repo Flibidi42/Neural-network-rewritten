@@ -10,6 +10,7 @@ class Net{
 		float ***m_grad;
 		int *m_size_layers;
 		int m_nb_layers;
+		int m_nb_input;
 		
 	public:
 		Net(int *size_layers, int nb_layers);
