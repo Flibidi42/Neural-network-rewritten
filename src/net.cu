@@ -83,5 +83,19 @@ Net::Net(int *size_layers, int nb_layers, int nb_input){
 			}
 		}
 	}
+}
+
+int* Net::comput(float* input){
+	
+	int max = (m_max_lay > nb_input)?
+	float* transition = new float[m_max_lay];
+	
+	for(int i = 0;)
+
+	for(int i = 0; i<m_nb_layers; i++){
+		for(int j = 0; j<size_layers[i]; j++){
+			
+		}
+	}
 	
 }
