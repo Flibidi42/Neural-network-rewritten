@@ -87,6 +87,40 @@ Net::Net(int *size_layers, int nb_layers, int nb_input){
 	}
 }
 
+void learning(float* input, float *expect){
+	
+	float* output = comput(input);
+	float** transition = new float*[m_nb_layers];
+	for(int i = 0; i<m_nb_layers; i++){
+		transtion[i] = new float[m_max_lay];
+		for(int j = 0; j<m_max_lay; j++){
+			transtion[i][j] = 0;
+		}
+	}
+	
+	//computation with memory
+	
+	for(int i = 0; i<m_nb_layers; i++){ // for each layer
+		for(int j = 0; j<m_size_layers[i]; j++){ // for each neuron
+			//calcul layers
+			if(i == 0){
+				for(int k = 0; k<m_nb_input; k++){ // sum
+					transition[0][j] += input[k] * m_weight[i][j][k];
+				}
+				transition[0][j] += m_bias[i][j];//bias
+				transition[0][j] = sigmo(transition[0][j]);
+			}
+			else{
+				for(int k = 0; k<m_size_layers[i-1]; k++){ // sum
+					transition[j] += transition_old[k] * m_weight[i][j][k];
+				}
+				transition[j] += m_bias[i][j];//bias
+				transition[j] = sigmo(transition[j]);
+			}
+		}
+	}
+}
+
 float* Net::comput(float* input){
 	
 	float* transition = new float[m_max_lay];
@@ -107,11 +141,8 @@ float* Net::comput(float* input){
 				for(int k = 0; k<m_size_layers[i-1]; k++){ // sum
 					transition[j] += transition_old[k] * m_weight[i][j][k];
 				}
-				cout << 1 << "/ " << transition[j] << endl;
 				transition[j] += m_bias[i][j];//bias
-				cout << 2 << "/ " << transition[j] << endl;
 				transition[j] = sigmo(transition[j]);
-				cout << 3 << "/ " << transition[j] << endl;
 			}
 		}
 		//switch transistion
@@ -119,7 +150,6 @@ float* Net::comput(float* input){
 				transition_old[k] = transition[k];
 		}
 	}
-	
 	return transition;
 	
 }
