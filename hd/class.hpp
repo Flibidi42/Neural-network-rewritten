@@ -1,12 +1,13 @@
+#ifndef  CLASS_H
+#define CLASS_H
 #include <iostream>
-#include "../CUDA_files/common/book.h"
 
 class Neuron {
 	
 	private:
 		float* m_weight;
 		float m_bias;
-		int nb_input;
+		int m_nb_input;
 		float m_y;
 		float m_z;
 	
@@ -19,3 +20,5 @@ class Neuron {
 	
 	
 };
+
+#endif
