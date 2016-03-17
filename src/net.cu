@@ -1,5 +1,7 @@
 #include "../hd/class.hpp"
 
+using namespace std;
+
 Net::Net(int *size_layers, int nb_layers, int nb_input){
 	
 	m_nb_layers = nb_layers;
@@ -24,7 +26,7 @@ Net::Net(int *size_layers, int nb_layers, int nb_input){
 	//bias - init
 	for(int i = 0; i<nb_layers; i++){
 		for(int j = 0; j<size_layers[i]; j++){
-			m_bias[i][j] = 0.5;
+			m_bias[i][j] = 0;
 		}
 	}
 		
@@ -92,7 +94,7 @@ float* Net::comput(float* input){
 	
 	for(int i = 0; i<m_nb_layers; i++){ // for each layer
 		for(int j = 0; j<m_size_layers[i]; j++){ // for each neuron
-		
+			transition[j] = 0;
 			//calcul layers
 			if(i == 0){
 				for(int k = 0; k<m_nb_input; k++){ // sum
@@ -105,14 +107,16 @@ float* Net::comput(float* input){
 				for(int k = 0; k<m_size_layers[i-1]; k++){ // sum
 					transition[j] += transition_old[k] * m_weight[i][j][k];
 				}
+				cout << 1 << "/ " << transition[j] << endl;
 				transition[j] += m_bias[i][j];//bias
+				cout << 2 << "/ " << transition[j] << endl;
 				transition[j] = sigmo(transition[j]);
+				cout << 3 << "/ " << transition[j] << endl;
 			}
-			
-			//switch transistion
-			for(int k = 0; k<m_size_layers[i]; k++){
-					transition_old[k] = transition[k];
-			}
+		}
+		//switch transistion
+		for(int k = 0; k<m_size_layers[i]; k++){
+				transition_old[k] = transition[k];
 		}
 	}
 	
