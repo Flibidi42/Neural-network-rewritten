@@ -15,7 +15,8 @@ class Net{
 		
 	public:
 		Net(int *size_layers, int nb_layers, int nb_input);
-		int* comput(float* input);
+		float* comput(float* input);
+		float sigmo(float val);
 };
 
 
