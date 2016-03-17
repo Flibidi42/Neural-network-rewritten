@@ -2,23 +2,20 @@
 #define CLASS_H
 #include <iostream>
 
-class Neuron {
-	
+class Net{
 	private:
-		float* m_weight;
-		float m_bias;
-		int m_nb_input;
-		float m_y;
-		float m_z;
-	
+		float **m_bias;
+		float  ***m_weight;
+		float ***m_delta;
+		float ***m_grad;
+		int *m_size_layers;
+		int m_nb_layers;
+		
 	public:
-		Neuron();
-		Neuron(int nb_input);
-	
-	
-	
-	
-	
-};
+		Net(int *size_layers, int nb_layers);
+}
+
+
+
 
 #endif
