@@ -90,6 +90,7 @@ Net::Net(int *size_layers, int nb_layers, int nb_input){
 void learning(float* input, float *expect){
 	
 	float* output = comput(input);
+	float error = 0;
 	float** transition = new float*[m_nb_layers];
 	for(int i = 0; i<m_nb_layers; i++){
 		transtion[i] = new float[m_max_lay];
@@ -112,13 +113,33 @@ void learning(float* input, float *expect){
 			}
 			else{
 				for(int k = 0; k<m_size_layers[i-1]; k++){ // sum
-					transition[j] += transition_old[k] * m_weight[i][j][k];
+					transition[i][j] += transition_old[i][k] * m_weight[i][j][k];
 				}
-				transition[j] += m_bias[i][j];//bias
-				transition[j] = sigmo(transition[j]);
+				transition[i][j] += m_bias[i][j];//bias
+				transition[i][j] = sigmo(transition[i][j]);
 			}
 		}
 	}
+	
+	//error computation
+
+	error = comput_error(transition[m_nb_layers-1], expect);
+	
+	//backprop
+	
+	
+	
+	
+}
+
+float Net::comput_error(float* out, float* expect){
+	
+	float error = 0;
+	
+	for(int i = 0; i<m_size_layers[m_nb_layers-1]; i++){
+		error += 0.5*(out[i] - expect[i])*(out[i] - expect[i]);
+	}
+	return error;	
 }
 
 float* Net::comput(float* input){

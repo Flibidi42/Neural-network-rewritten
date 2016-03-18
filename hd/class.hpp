@@ -12,6 +12,7 @@ class Net{
 		int m_nb_layers;
 		int m_nb_input;
 		int m_max_lay;
+		float comput_error(float* out, float* expect);
 		
 	public:
 		Net(int *size_layers, int nb_layers, int nb_input);
