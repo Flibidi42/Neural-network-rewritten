@@ -125,8 +125,6 @@ void Net::learning(float* input, float *expect){
 
 	error = comput_error(transition[m_nb_layers-1], expect);
 	
-	cout << "[Debug] error : " << error << endl;
-	
 	//backprop
 	
 	float derivation_factor = 1.f;
@@ -136,17 +134,33 @@ void Net::learning(float* input, float *expect){
 		for(int j = 0; j<m_size_layers[i]; j++){ // for each neuron
 		
 			y = transition[i];
-			derivation_factor = 1.f;
 			
-			//factor computation
+			//grad / delta
 			if(i == m_nb_layers-1){ // output neuron
-				derivation_factor *= - (expect[j]-y[j]) * y[j] * (1-y[j]);
+			
+				grad[i][j] = - (expect[j]-y[j]) * y[j] * (1-y[j]);
+				for(int k= 0; k<m_size_layers[i-1]; k++){
+					delta[i][j][k] = grad[i][j] * transition[i-1][k];
+				}
 			}
+			
+			else if(i  == 0){ // input neuron
+				for(int k= 0; k<m_size_layers[i+1]; k++){
+					grad[i][j] = grad[i+1][k] * weight[i+1][j][k] * y[j] * (1-y[j]);
+				}
+				for(int k= 0; k<m_size_layers[i-1]; k++){
+					delta[i][j][k] = grad[i][j] * input[k];
+				}
+			}
+			
 			else{ // others
-				derivation_factor *=
+				for(int k= 0; k<m_size_layers[i+1]; k++){
+					grad[i][j] = grad[i+1][k] * weight[i+1][j][k] * y[j] * (1-y[j]);
+				}
+				for(int k= 0; k<m_size_layers[i-1]; k++){
+					delta[i][j][k] = grad[i][j] * transition[i-1][k];
+				}
 			}
-			
-			
 			
 		}
 	}
