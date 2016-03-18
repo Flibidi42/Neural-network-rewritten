@@ -125,51 +125,65 @@ void Net::learning(float* input, float *expect){
 
 	error = comput_error(transition[m_nb_layers-1], expect);
 	
+	cout << "Error : " << error << endl;
+	
 	//backprop
 	
-	float derivation_factor = 1.f;
-	float y*;
+	float *y;
 	
 	for(int i = m_nb_layers-1; i>=0; i--){ // for each layer
 		for(int j = 0; j<m_size_layers[i]; j++){ // for each neuron
 		
 			y = transition[i];
 			
-			//grad / delta
+			//m_grad / m_delta
 			if(i == m_nb_layers-1){ // output neuron
 			
-				grad[i][j] = - (expect[j]-y[j]) * y[j] * (1-y[j]);
+				m_grad[i][j] = - (expect[j]-y[j]) * y[j] * (1-y[j]);
 				for(int k= 0; k<m_size_layers[i-1]; k++){
-					delta[i][j][k] = grad[i][j] * transition[i-1][k];
+					m_delta[i][j][k] = m_grad[i][j] * transition[i-1][k];
 				}
 			}
 			
 			else if(i  == 0){ // input neuron
 				for(int k= 0; k<m_size_layers[i+1]; k++){
-					grad[i][j] = grad[i+1][k] * weight[i+1][j][k] * y[j] * (1-y[j]);
+					m_grad[i][j] = m_grad[i+1][k] * m_weight[i+1][j][k] * y[j] * (1-y[j]);
 				}
 				for(int k= 0; k<m_size_layers[i-1]; k++){
-					delta[i][j][k] = grad[i][j] * input[k];
+					m_delta[i][j][k] = m_grad[i][j] * input[k];
 				}
 			}
 			
 			else{ // others
 				for(int k= 0; k<m_size_layers[i+1]; k++){
-					grad[i][j] = grad[i+1][k] * weight[i+1][j][k] * y[j] * (1-y[j]);
+					m_grad[i][j] = m_grad[i+1][k] * m_weight[i+1][j][k] * y[j] * (1-y[j]);
 				}
 				for(int k= 0; k<m_size_layers[i-1]; k++){
-					delta[i][j][k] = grad[i][j] * transition[i-1][k];
+					m_delta[i][j][k] = m_grad[i][j] * transition[i-1][k];
 				}
 			}
 			
 		}
+		
+		
 	}
 	
-}
-
-void Net::backprop(){
+	//backprop apply
 	
-	
+	for(int i = m_nb_layers-1; i>=0; i--){ // for each layer
+		for(int j = 0; j<m_size_layers[i]; j++){ // for each neuron
+		if(i == 0){
+				for(int k = 0; k<m_nb_input; k++){ // sum
+					m_weight[i][j][k] += -learning_rate * m_delta[i][j][k];
+				}
+			}
+			else{
+				for(int k = 0; k<m_size_layers[i-1]; k++){ // sum
+					m_weight[i][j][k] += -learning_rate * m_delta[i][j][k];
+				}
+			}
+		}
+	}
 	
 }
 
