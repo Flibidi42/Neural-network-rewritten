@@ -6,8 +6,9 @@ int main(){
 	
 	int test[2] = {2,1};
 	Net my_net(test, 2, 2);
-	 test2[2] = {1,1};
-	cout << (my_net.comput(test2))[0] << endl;
+	float test2[2] = {1,1};
+	float expec[1] = {1};
+	my_net.learning(test2, expec);
 	
 	return 0;
 }
