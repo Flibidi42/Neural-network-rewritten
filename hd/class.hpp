@@ -1,7 +1,7 @@
 #ifndef  CLASS_H
 #define CLASS_H
 #include <iostream>
-#define learning_rate 0.1
+#define learning_rate 2.5
 
 class Net{
 	private:

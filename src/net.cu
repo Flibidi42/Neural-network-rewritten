@@ -146,18 +146,22 @@ void Net::learning(float* input, float *expect){
 			}
 			
 			else if(i  == 0){ // input neuron
+				m_grad[i][j] = 0;
 				for(int k= 0; k<m_size_layers[i+1]; k++){
-					m_grad[i][j] = m_grad[i+1][k] * m_weight[i+1][j][k] * y[j] * (1-y[j]);
+					m_grad[i][j] += m_grad[i+1][k] * m_weight[i+1][k][j];
 				}
-				for(int k= 0; k<m_size_layers[i-1]; k++){
+				m_grad[i][j] *= y[j] * (1-y[j]);
+				for(int k= 0; k<m_nb_input; k++){
 					m_delta[i][j][k] = m_grad[i][j] * input[k];
 				}
 			}
 			
 			else{ // others
+				m_grad[i][j] = 0;
 				for(int k= 0; k<m_size_layers[i+1]; k++){
-					m_grad[i][j] = m_grad[i+1][k] * m_weight[i+1][j][k] * y[j] * (1-y[j]);
+					m_grad[i][j] += m_grad[i+1][k] * m_weight[i+1][k][j];
 				}
+				m_grad[i][j] *= y[j] * (1-y[j]);
 				for(int k= 0; k<m_size_layers[i-1]; k++){
 					m_delta[i][j][k] = m_grad[i][j] * transition[i-1][k];
 				}
