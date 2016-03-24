@@ -1,7 +1,7 @@
 #ifndef  CLASS_H
 #define CLASS_H
 #include <iostream>
-#define learning_rate 2.5
+#define learning_rate 2.f
 
 class Net{
 	private:
@@ -15,7 +15,7 @@ class Net{
 		int m_max_lay;
 		float comput_error(float* out, float* expect);
 		float sigmo(float val);
-		
+
 	public:
 		Net(int *size_layers, int nb_layers, int nb_input);
 		float* comput(float* input);

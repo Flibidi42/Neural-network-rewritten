@@ -2,6 +2,10 @@
 
 using namespace std;
 
+float frand_a_b(float a, float b){
+    return ( rand()/(float)RAND_MAX ) * (b-a) + a;
+}
+
 Net::Net(int *size_layers, int nb_layers, int nb_input){
 
 	m_nb_layers = nb_layers;
@@ -29,7 +33,7 @@ Net::Net(int *size_layers, int nb_layers, int nb_input){
 	//bias - init
 	for(int i = 0; i<nb_layers; i++){
 		for(int j = 0; j<size_layers[i]; j++){
-			m_bias[i][j] = 0;
+			m_bias[i][j] = frand_a_b(0.f, 1.f);
 		}
 	}
 
@@ -43,13 +47,13 @@ Net::Net(int *size_layers, int nb_layers, int nb_input){
 			if(i == 0){ // particular case : first layer
 				m_weight[i][j] = new float[nb_input];
 				for(int k = 0; k<nb_input; k++){ // init
-					m_weight[i][j][k] = 1;
+					m_weight[i][j][k] = frand_a_b(0.f, 1.f);
 				}
 			}
 			else{ // other layers
 				m_weight[i][j] = new float[size_layers[i-1]];
 				for(int k = 0; k<size_layers[i-1]; k++){ // init
-					m_weight[i][j][k] = 1;
+					m_weight[i][j][k] = frand_a_b(0.f, 1.f);
 				}
 			}
 		}
@@ -126,6 +130,7 @@ void Net::learning(float* input, float *expect){
 
 	//error computation
 
+
 	error = comput_error(transition[m_nb_layers-1], expect);
 
 	cout << "Error : " << error << endl;
@@ -146,6 +151,13 @@ void Net::learning(float* input, float *expect){
 				for(int k= 0; k<m_size_layers[i-1]; k++){
 					m_delta[i][j][k] = m_grad[i][j] * transition[i-1][k];
 				}
+				/*cout << "[Debug couche " << i << "] ";
+				for(int k = 0; k < m_size_layers[i]; k++){
+					cout << "grad " << k << " : " << m_grad[i][k] << " ";
+					for(int l= 0; l<m_size_layers[i-1]; l++)
+						cout << "delta " << k << " poids " << l << " : " << m_delta[i][k][l] << " ";
+				}
+				cout << endl;*/
 			}
 
 			else if(i  == 0){ // input neuron
