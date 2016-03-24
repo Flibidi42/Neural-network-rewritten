@@ -3,13 +3,16 @@
 using namespace std;
 
 Net::Net(int *size_layers, int nb_layers, int nb_input){
-	
+
 	m_nb_layers = nb_layers;
 	m_nb_input = nb_input;
-	for(int i = 0; i< nb_input; i++){
+
+	m_size_layers = new int[nb_layers];
+
+	for(int i = 0; i< nb_layers; i++){
 		m_size_layers[i] = size_layers[i];
 	}
-	
+
 	//max_size for layers
 	int max = 0;
 	for(int i = 0; i<nb_layers; i++){
@@ -17,7 +20,7 @@ Net::Net(int *size_layers, int nb_layers, int nb_input){
 			max = size_layers[i];
 	}
 	m_max_lay = max;
-	
+
 	//bias - alloc
 	m_bias = new float*[nb_layers];
 	for(int i = 0; i<nb_layers; i++){
@@ -29,7 +32,7 @@ Net::Net(int *size_layers, int nb_layers, int nb_input){
 			m_bias[i][j] = 0;
 		}
 	}
-		
+
 	//weight - alloc/init
 	m_weight = new float**[nb_layers];
 	for(int i = 0; i<nb_layers; i++){
@@ -51,7 +54,7 @@ Net::Net(int *size_layers, int nb_layers, int nb_input){
 			}
 		}
 	}
-	
+
 	//grad - alloc/init
 	m_grad = new float*[nb_layers];
 	for(int i = 0; i<nb_layers; i++){
@@ -63,7 +66,7 @@ Net::Net(int *size_layers, int nb_layers, int nb_input){
 			m_grad[i][j] = 0;
 		}
 	}
-	
+
 	//delta - alloc/init
 	m_delta = new float**[nb_layers];
 	for(int i = 0; i<nb_layers; i++){
@@ -88,7 +91,7 @@ Net::Net(int *size_layers, int nb_layers, int nb_input){
 }
 
 void Net::learning(float* input, float *expect){
-	
+
 	float* output = comput(input);
 	float error = 0;
 	float** transition = new float*[m_nb_layers];
@@ -98,9 +101,9 @@ void Net::learning(float* input, float *expect){
 			transition[i][j] = 0;
 		}
 	}
-	
+
 	//computation with memory
-	
+
 	for(int i = 0; i<m_nb_layers; i++){ // for each layer
 		for(int j = 0; j<m_size_layers[i]; j++){ // for each neuron
 			//calcul layers
@@ -120,31 +123,31 @@ void Net::learning(float* input, float *expect){
 			}
 		}
 	}
-	
+
 	//error computation
 
 	error = comput_error(transition[m_nb_layers-1], expect);
-	
+
 	cout << "Error : " << error << endl;
-	
+
 	//backprop
-	
+
 	float *y;
-	
+
 	for(int i = m_nb_layers-1; i>=0; i--){ // for each layer
 		for(int j = 0; j<m_size_layers[i]; j++){ // for each neuron
-		
+
 			y = transition[i];
-			
+
 			//m_grad / m_delta
 			if(i == m_nb_layers-1){ // output neuron
-			
+
 				m_grad[i][j] = - (expect[j]-y[j]) * y[j] * (1-y[j]);
 				for(int k= 0; k<m_size_layers[i-1]; k++){
 					m_delta[i][j][k] = m_grad[i][j] * transition[i-1][k];
 				}
 			}
-			
+
 			else if(i  == 0){ // input neuron
 				m_grad[i][j] = 0;
 				for(int k= 0; k<m_size_layers[i+1]; k++){
@@ -155,7 +158,7 @@ void Net::learning(float* input, float *expect){
 					m_delta[i][j][k] = m_grad[i][j] * input[k];
 				}
 			}
-			
+
 			else{ // others
 				m_grad[i][j] = 0;
 				for(int k= 0; k<m_size_layers[i+1]; k++){
@@ -166,14 +169,14 @@ void Net::learning(float* input, float *expect){
 					m_delta[i][j][k] = m_grad[i][j] * transition[i-1][k];
 				}
 			}
-			
+
 		}
-		
-		
+
+
 	}
-	
+
 	//backprop apply
-	
+
 	for(int i = m_nb_layers-1; i>=0; i--){ // for each layer
 		for(int j = 0; j<m_size_layers[i]; j++){ // for each neuron
 		if(i == 0){
@@ -188,24 +191,24 @@ void Net::learning(float* input, float *expect){
 			}
 		}
 	}
-	
+
 }
 
 float Net::comput_error(float* out, float* expect){
-	
+
 	float error = 0;
-	
+
 	for(int i = 0; i<m_size_layers[m_nb_layers-1]; i++){
 		error += 0.5*(out[i] - expect[i])*(out[i] - expect[i]);
 	}
-	return error;	
+	return error;
 }
 
 float* Net::comput(float* input){
-	
+
 	float* transition = new float[m_max_lay];
 	float* transition_old = new float[m_max_lay];
-	
+
 	for(int i = 0; i<m_nb_layers; i++){ // for each layer
 		for(int j = 0; j<m_size_layers[i]; j++){ // for each neuron
 			transition[j] = 0;
@@ -231,7 +234,7 @@ float* Net::comput(float* input){
 		}
 	}
 	return transition;
-	
+
 }
 
 float Net::sigmo(float val){

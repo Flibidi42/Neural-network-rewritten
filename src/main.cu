@@ -1,10 +1,13 @@
 #include "../hd/class.hpp"
 #define nb_train 500
+#include <time.h>
+#include <cstdlib>
 
 using namespace std;
 
 int main(){
-	
+
+	srand(time(NULL));
 	int test[3] = {5,2,1};
 	Net my_net(test, 3, 2);
 	float tab[2];
@@ -15,11 +18,9 @@ int main(){
 		expec[0] = (tab[0] == 1 || tab[1] == 1)?1:0;
 		my_net.learning(tab, expec);
 	}
-	
+
 	tab[0] = 0;
 	tab[1] = 0;
 	cout << "Test : with 0 0 : " << (my_net.comput(tab))[0] << endl;
-	
-	
 	return 0;
 }
